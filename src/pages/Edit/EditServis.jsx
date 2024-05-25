@@ -1,15 +1,64 @@
-import PropTypes from 'prop-types'; // Import PropTypes
+import PropTypes from 'prop-types';
 import { useState } from 'react';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import axios from 'axios';
 
-const EditServis = ({ onClose }) => {
-    const [tanggalMulai, setTanggalMulai] = useState(null);
-    const [tanggalSelesai, setTanggalSelesai] = useState(null);
-  
+const EditServis = ({ onClose, servis }) => {
+  // Fungsi untuk mendapatkan token otentikasi dari local storage
+  const getAuthToken = () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      console.error("Token not available. Please login.");
+      return null;
+    }
+    return token;
+  };
+
+  // Buat state untuk menyimpan nilai input
+  const [formData, setFormData] = useState({
+    nama_barang: servis.nama_barang,
+    kode_barang: servis.kode_barang,
+    kerusakan: servis.kerusakan,
+    deskripsi: servis.deskripsi,
+    tanggalMulai: servis.tanggalMulai,
+    tanggalSelesai: servis.tanggalSelesai,
+    teknisi: servis.teknisi,
+    biaya: servis.biaya
+  });
+
+  // Fungsi untuk menangani perubahan input
+  const handleChange = e => {
+    const { name, value } = e.target;
+    setFormData(prevState => ({
+      ...prevState,
+      [name]: value
+    }));
+  };
+
+  // Fungsi untuk menangani pengiriman data
+  const handleSubmit = async e => {
+    e.preventDefault();
+    try {
+      const token = getAuthToken(); // Dapatkan token otentikasi
+      if (!token) return; // Jika token tidak tersedia, hentikan eksekusi
+      await axios.put(`http://127.0.0.1:8000/api/data_servis/update/${servis.id}`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}` // Sertakan token dalam header permintaan
+        }
+      });
+      onClose(); // Tutup form setelah berhasil
+    } catch (error) {
+      console.error('Gagal mengedit barang:', error);
+    }
+  };
+
+  const [tanggalMulai, setTanggalMulai] = useState(servis.tanggalMulai);
+  const [tanggalSelesai, setTanggalSelesai] = useState(servis.tanggalSelesai);
+
   return (
     <>
-      <style>
+       <style>
         {`
           .popup-container {
             position: fixed;
@@ -92,35 +141,36 @@ const EditServis = ({ onClose }) => {
       <div className="popup-container">
         <div className="popup">
           <div className="popup-inner">
-            <h2 style={{ marginBottom: '10px' }}>Edit Servis Barang</h2> {/* Tambahkan margin-bottom di sini */}
-            {/* Form tambah barang di sini */}
-            <form>
-              <label>Kerusakan</label> {/* Tambahkan margin-bottom di sini */}
-              <input type="text" name="nama_barang" placeholder='silahkan isi kerusakan' />
-              <br></br>
+            <h2 style={{ marginBottom: '10px' }}>Edit Servis Barang</h2>
+            <form onSubmit={handleSubmit}>
+              <label>Nama Barang</label>
+              <input type="text" name="nama_barang" value={formData.nama_barang} onChange={handleChange} placeholder="Silahkan isi nama barang" style={{ height: '20px' }} />
+              <label>Kode Barang</label>
+              <input type="text" name="kode_barang" value={formData.kode_barang} onChange={handleChange} placeholder="Silahkan isi kode barang" style={{ height: '20px' }} />
+              <label>Kerusakan</label>
+              <input type="text" name="kerusakan" value={formData.kerusakan} onChange={handleChange} placeholder="Silahkan isi kerusakan" style={{ height: '20px' }} />
               <label>Deskripsi</label>
-              <input type="text" name="merk_barang" placeholder='silahkan isi deskripsi kerusakan'/>
-              <br></br>
+              <input type="text" name="deskripsi" value={formData.deskripsi} onChange={handleChange} placeholder="Silahkan isi deskripsi kerusakan" style={{ height: '20px' }} />
               <label>Tanggal Servis</label>
-              <DatePicker 
-              className="date" 
-              placeholderText='silahkan pilih tanggal mulai servis'
-              selected={tanggalMulai} 
-              onChange={(date) => setTanggalMulai(date)} />
-              <br></br>
+              <DatePicker
+                className="date"
+                selected={tanggalMulai}
+                onChange={date => setTanggalMulai(date)}
+                placeholderText="Silahkan pilih tanggal mulai servis"
+                style={{ height: '20px' }}
+              />
               <label>Tanggal Selesai Servis</label>
-              <DatePicker 
-              className="date" 
-              placeholderText='silahkan pilih tanggal selesai servis'
-              selected={tanggalSelesai} 
-              onChange={(date) => setTanggalSelesai(date)} />
-              <br></br>
+              <DatePicker
+                className="date"
+                selected={tanggalSelesai}
+                onChange={date => setTanggalSelesai(date)}
+                placeholderText="Silahkan pilih tanggal selesai servis"
+                style={{ height: '20px' }}
+              />
               <label>Teknisi</label>
-              <input type="text" name="merk_barang" placeholder='silahkan isi nama teknisi'/>
-              <br></br>
+              <input type="text" name="teknisi" value={formData.teknisi} onChange={handleChange} placeholder="Silahkan isi nama teknisi" style={{ height: '20px' }} />
               <label>Biaya</label>
-              <input type="text" name="merk_barang" placeholder='silahkan isi biaya servis'/>
-              <br></br>
+              <input type="text" name="biaya" value={formData.biaya} onChange={handleChange} placeholder="Silahkan isi biaya servis" style={{ height: '20px' }} />
               <div className="button-container">
                 <button type="button" className="cancel" onClick={onClose}>Batal</button>
                 <button type="submit" className="add">Edit</button>
@@ -134,7 +184,8 @@ const EditServis = ({ onClose }) => {
 };
 
 EditServis.propTypes = {
-  onClose: PropTypes.func.isRequired // Validate onClose as a required function prop
+  onClose: PropTypes.func.isRequired,
+  servis: PropTypes.object.isRequired
 };
 
 export default EditServis;

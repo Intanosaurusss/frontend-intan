@@ -25,6 +25,8 @@ import DataPeminjamanUser from './pages user/DataPeminjamanUser';
 import RiwayatPeminjamanUser from './pages user/RiwayatPeminjamanUser';
 import ProfilUser from './pages user/ProfilUser';
 import DetailDataBarangUser from './pages user/DetailDataBarangUser';
+import FormTambahUser from './pages/FormTambahUser';
+import EditUser from './pages/Edit/EditUser';
 
 function App() {
   return (
@@ -45,9 +47,11 @@ function App() {
         <Route path="/Formtambahbarang" element={<FormTambahBarang />} />
         <Route path="/Formtambahruang" element={<FormTambahRuang />} />
         <Route path="/Formtambahpeminjaman" element={<FormTambahPeminjaman />} />
+        <Route path="/Formtambahuser" element={<FormTambahUser />} />
         <Route path="/Editbarang" element={<EditBarang />} />
         <Route path="/Editruang" element={<EditRuang />} />
         <Route path="/Editservis" element={<EditServis />} />
+        <Route path="/Edituser" element={<EditUser />} />
         <Route path="/Profil" element={<Profil />} />
         <Route path="/Dashboarduser" element={<DashboardUser />} />
         <Route path="/Datapeminjamanuser" element={<DataPeminjamanUser />} />

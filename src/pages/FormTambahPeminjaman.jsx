@@ -1,6 +1,15 @@
 import PropTypes from 'prop-types'; // Import PropTypes
+import { useEffect, useState } from 'react';
 
 const FormTambahPeminjaman = ({ onClose }) => {
+  const [currentDate, setCurrentDate] = useState('');
+
+  useEffect(() => {
+    const today = new Date();
+    const formattedDate = today.toISOString().split('T')[0]; // Format tanggal ke yyyy-mm-dd
+    setCurrentDate(formattedDate);
+  }, []);
+
   return (
     <>
       <style>
@@ -23,19 +32,19 @@ const FormTambahPeminjaman = ({ onClose }) => {
             padding: 20px;
             border: 1px solid #ccc;
             width: 50%;
-            height: 90%;
+            height: 98%;
           }
 
           /* Gaya untuk label */
           .popup label {
             display: block;
-            margin-bottom: 5px; /* Jarak antara label dan input */
+            margin-bottom: 1px; /* Jarak antara label dan input */
           }
 
           /* Gaya untuk input */
           .popup input, .popup select {
             width: 100%; /* Mengisi lebar kontainer */
-            padding: 8px; /* Ruang dalam input */
+            padding: 5px; /* Ruang dalam input */
             margin-bottom: 10px; /* Jarak antara input */
             background-color: white;
             border: 2px solid grey; /* Border berwarna abu */
@@ -54,7 +63,7 @@ const FormTambahPeminjaman = ({ onClose }) => {
           /* Gaya untuk button-container */
           .popup .button-container {
             text-align: left; /* Posisi tombol di sebelah kiri */
-            margin-top: 20px; /* Jarak antara tombol dan form */
+            margin-top: 5px; /* Jarak antara tombol dan form */
           }
 
           /* Gaya untuk tombol "Batal" */
@@ -82,21 +91,27 @@ const FormTambahPeminjaman = ({ onClose }) => {
       <div className="popup-container">
         <div className="popup">
           <div className="popup-inner">
-            <h2 style={{ marginBottom: '20px' }}>Tambah Data Peminjaman</h2> {/* Tambahkan margin-bottom di sini */}
+            <h2 style={{ marginBottom: '10px' }}>Tambah Data Peminjaman</h2> {/* Tambahkan margin-bottom di sini */}
             {/* Form tambah barang di sini */}
             <form>
-              <label style={{ marginBottom: '10px' }}>Nama</label> {/* Tambahkan margin-bottom di sini */}
+              <label style={{ marginBottom: '1px' }}>Nama</label> {/* Tambahkan margin-bottom di sini */}
               <input type="text" name="nama_barang" placeholder='silahkan isi nama peminjam ' />
               <br></br>
               <label>Kelas</label>
               <input type="text" name="merk_barang" placeholder='silahkan isi kelas peminjam'/>
               <br></br>
               <label>Nama Barang</label>
-              <input type="text" name="merk_barang" placeholder='terisi otomatis'/>
+              <input type="text" name="merk_barang" placeholder='silahkan isi nama barang yang akan dipinjam'/>
               <br></br>
               <label>Merk</label>
-              <input type="text" name="merk_barang" placeholder='terisi otomatis'/>
+              <input type="text" name="merk_barang" placeholder='silahkan isi merk barang yang akan dipinjam'/>
               <br></br>
+              <label>Kode</label>
+              <input type="text" name="merk_barang" placeholder='silahkan isi kode barangnya'/>
+              <br></br>
+              <label>Tanggal Pinjam</label>
+            <input type="text" name="tanggal_pinjam" value={currentDate} readOnly />
+            <br></br>
               <label>Status</label>
               <input type="text" name="status" value="Dipinjam" readOnly />
               <br></br>

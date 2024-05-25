@@ -53,7 +53,7 @@ const RiwayatPeminjamanUser= () => {
           `}
           </style>
           <div className="flex-container">
-           <h1 className="title">Riwayat Peminjaman</h1>
+           <h1 className="title">Laporan Peminjaman</h1>
           </div>
           <FilterComponent></FilterComponent>
           <PaginateComponent></PaginateComponent>

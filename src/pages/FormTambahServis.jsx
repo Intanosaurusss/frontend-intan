@@ -13,6 +13,8 @@ const TambahServis = ({ onClose }) => {
       event.preventDefault(); // Mencegah pengiriman formulir secara default
       
       // Mengambil nilai-nilai dari formulir
+      const nama_barang = event.target.nama_barang.value;
+      const kode_barang = event.target.kode_barang.value;
       const kerusakan = event.target.kerusakan.value;
       const deskripsi = event.target.deskripsi.value;
       const mulai = format(tanggalMulai, "yyyy-MM-dd"); // Format tanggalMulai
@@ -21,7 +23,9 @@ const TambahServis = ({ onClose }) => {
       const biaya = event.target.biaya.value;
       try {
         // Mengirimkan data ke server menggunakan method POST
-        const response = await axios.post('http://127.0.0.1:8000/api/servis', {
+        const response = await axios.post('http://127.0.0.1:8000/api/data_servis/store', {
+          nama_barang,
+          kode_barang,
           kerusakan,
           deskripsi, // Sesuaikan nama field dengan yang diharapkan oleh server
           mulai,
@@ -71,7 +75,7 @@ const TambahServis = ({ onClose }) => {
             padding: 20px;
             border: 1px solid #ccc;
             width: 50%;
-            height: 95%;
+            height: 105%;
           }
 
           /* Gaya untuk label */
@@ -133,35 +137,40 @@ const TambahServis = ({ onClose }) => {
       <div className="popup-container">
         <div className="popup">
           <div className="popup-inner">
-            <h2 style={{ marginBottom: '10px' }}>Tambah Servis Barang</h2> {/* Tambahkan margin-bottom di sini */}
+            <h2 style={{ marginBottom: '5px' }}>Tambah Servis Barang</h2> {/* Tambahkan margin-bottom di sini */}
             {/* Form tambah barang di sini */}
             <form onSubmit={handleSubmit}>
+            <label>Nama Barang</label>
+              <input type="text" name="nama_barang" placeholder='silahkan isi nama barang' style={{ height: '20px' }}/>
+              <br></br>
+              <label>Kode Barang</label>
+              <input type="text" name="kode_barang" placeholder='silahkan isi kode barang' style={{ height: '20px' }}/>
+              <br></br>
               <label>Kerusakan</label> {/* Tambahkan margin-bottom di sini */}
-              <input type="text" name="kerusakan" placeholder='silahkan isi kerusakan' />
+              <input type="text" name="kerusakan" placeholder='silahkan isi kerusakan' style={{ height: '20px' }}/>
               <br></br>
               <label>Deskripsi</label>
-              <input type="text" name="deskripsi" placeholder='silahkan isi deskripsi kerusakan'/>
+              <input type="text" name="deskripsi" placeholder='silahkan isi deskripsi kerusakan' style={{ height: '20px' }}/>
               <br></br>
               <label>Tanggal Servis</label>
               <DatePicker 
               className="mulai" 
               placeholderText='silahkan pilih tanggal mulai servis'
               selected={tanggalMulai} 
-              onChange={(date) => setTanggalMulai(date)} />
+              onChange={(date) => setTanggalMulai(date)} style={{ height: '20px' }}/>
               <br></br>
               <label>Tanggal Selesai Servis</label>
               <DatePicker 
               className="selesai" 
               placeholderText='silahkan pilih tanggal selesai servis'
               selected={tanggalSelesai} 
-              onChange={(date) => setTanggalSelesai(date)} />
+              onChange={(date) => setTanggalSelesai(date)} style={{ height: '20px' }} />
               <br></br>
               <label>Teknisi</label>
-              <input type="text" name="teknisi" placeholder='silahkan isi nama teknisi'/>
+              <input type="text" name="teknisi" placeholder='silahkan isi nama teknisi' style={{ height: '20px' }}/>
               <br></br>
               <label>Biaya</label>
-              <input type="text" name="biaya" placeholder='silahkan isi biaya servis'/>
-              <br></br>
+              <input type="text" name="biaya" placeholder='silahkan isi biaya servis' style={{ height: '20px' }}/>
               <div className="button-container">
                 <button type="button" className="cancel" onClick={onClose}>Batal</button>
                 <button type="submit" className="add">Tambah</button>

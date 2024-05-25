@@ -1,9 +1,55 @@
-import PropTypes from 'prop-types'; // Import PropTypes
+import { useState } from 'react';
+import PropTypes from 'prop-types';
+import axios from 'axios';
 
-const EditBarang = ({ onClose }) => {
+const EditBarang = ({ onClose, barang }) => {
+  // Fungsi untuk mendapatkan token otentikasi dari local storage
+  const getAuthToken = () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      console.error("Token not available. Please login.");
+      return null;
+    }
+    return token;
+  };
+
+  // Buat state untuk menyimpan nilai input
+  const [formData, setFormData] = useState({
+    nama_barang: barang.nama_barang,
+    merek: barang.merek,
+    jumlah: barang.jumlah
+  });
+
+  // Fungsi untuk menangani perubahan input
+  const handleChange = e => {
+    const { name, value } = e.target;
+    setFormData(prevState => ({
+      ...prevState,
+      [name]: value
+    }));
+  };
+
+  // Fungsi untuk menangani pengiriman data
+  const handleSubmit = async e => {
+    e.preventDefault();
+    try {
+      const token = getAuthToken(); // Dapatkan token otentikasi
+      if (!token) return; // Jika token tidak tersedia, hentikan eksekusi
+      await axios.put(`http://127.0.0.1:8000/api/data_barangs/update/${barang.id}`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}` // Sertakan token dalam header permintaan
+        }
+      });
+      onClose(); // Tutup form setelah berhasil
+    } catch (error) {
+      console.error('Gagal mengedit barang:', error);
+    }
+  };
+
+
   return (
     <>
-      <style>
+    <style>
         {`
           .popup-container {
             position: fixed;
@@ -78,29 +124,46 @@ const EditBarang = ({ onClose }) => {
             border-radius: 5px;
           }
         `}
-      </style>
+        </style>
       <div className="popup-container">
         <div className="popup">
           <div className="popup-inner">
-            <h2 style={{ marginBottom: '20px' }}>Edit Barang</h2> {/* Tambahkan margin-bottom di sini */}
-            {/* Form tambah barang di sini */}
-            <form>
-              <label style={{ marginBottom: '10px' }}>Nama Barang:</label> {/* Tambahkan margin-bottom di sini */}
-              <input type="text" name="nama_barang" placeholder='silahkan isi nama barang' />
-              <br></br>
+            <h2 style={{ marginBottom: '20px' }}>Edit Barang</h2>
+            <form onSubmit={handleSubmit}>
+              <label style={{ marginBottom: '10px' }}>Nama Barang:</label>
+              <input
+                type="text"
+                name="nama_barang"
+                value={formData.nama_barang}
+                onChange={handleChange}
+                placeholder="Silahkan isi nama barang"
+              />
+              <br />
               <label>Merk:</label>
-              <input type="text" name="merk_barang" placeholder='silahkan isi merk barang'/>
-              <br></br>
-              <label>Ruang:</label>
-              <select name="ruang_barang">
-                <option value="ruang1">Ruang lab pplg</option>
-                <option value="ruang2">Ruang 2</option>
-                <option value="ruang3">Ruang 3</option>
-              </select>
-              <br></br>
+              <input
+                type="text"
+                name="merek"
+                value={formData.merek}
+                onChange={handleChange}
+                placeholder="Silahkan isi merek barang"
+              />
+              <br />
+              <label>Jumlah:</label>
+              <input
+                type="text"
+                name="jumlah"
+                value={formData.jumlah}
+                onChange={handleChange}
+                placeholder="Silahkan isi jumlah barang"
+              />
+              <br />
               <div className="button-container">
-                <button type="button" className="cancel" onClick={onClose}>Batal</button>
-                <button type="submit" className="add">Edit</button>
+                <button type="button" className="cancel" onClick={onClose}>
+                  Batal
+                </button>
+                <button type="submit" className="add">
+                  Edit
+                </button>
               </div>
             </form>
           </div>
@@ -111,7 +174,8 @@ const EditBarang = ({ onClose }) => {
 };
 
 EditBarang.propTypes = {
-  onClose: PropTypes.func.isRequired // Validate onClose as a required function prop
+  onClose: PropTypes.func.isRequired,
+  barang: PropTypes.object.isRequired
 };
 
 export default EditBarang;

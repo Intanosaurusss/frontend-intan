@@ -1,44 +1,51 @@
+import { useState } from 'react';
+import PropTypes from 'prop-types';
 import axios from 'axios';
-import PropTypes from 'prop-types'; // Import PropTypes
-// import { useState } from 'react';
-import toast from 'react-hot-toast';
 
-const FormTambahBarang = ({ onClose }) => {
-  const handleSubmit = async (event) => {
-    event.preventDefault(); // Mencegah pengiriman formulir secara default
-    
-    // Mengambil nilai-nilai dari formulir
-    const nama_barang = event.target.nama_barang.value;
-    const merek = event.target.merek.value;
-    const jumlah = event.target.jumlah.value;
-    // const status = event.target.Status.value;
-  
+const EditUser = ({ onClose, user }) => {
+  // Fungsi untuk mendapatkan token otentikasi dari local storage
+  const getAuthToken = () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      console.error("Token not available. Please login.");
+      return null;
+    }
+    return token;
+  };
+
+  // Buat state untuk menyimpan nilai input
+  const [formData, setFormData] = useState({
+    name: user.name,
+    email: user.email,
+    password: user.password,
+    nisn: user.nisn,
+  });
+
+  // Fungsi untuk menangani perubahan input
+  const handleChange = e => {
+    const { name, value } = e.target;
+    setFormData(prevState => ({
+      ...prevState,
+      [name]: value
+    }));
+  };
+
+  // Fungsi untuk menangani pengiriman data
+  const handleSubmit = async e => {
+    e.preventDefault();
     try {
-      // Mengirimkan data ke server menggunakan method POST
-      const response = await axios.post('http://127.0.0.1:8000/api/data_barangs/store', {
-        nama_barang,
-        merek: merek, // Sesuaikan nama field dengan yang diharapkan oleh server
-        jumlah: jumlah,
+      const token = getAuthToken(); // Dapatkan token otentikasi
+      if (!token) return; // Jika token tidak tersedia, hentikan eksekusi
+      await axios.put(`http://127.0.0.1:8000/api/users/${user.id}`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}` // Sertakan token dalam header permintaan
+        }
       });
-  
-      // Menampilkan pesan toast sukses
-      toast.success(response.data.message, {
-        position: "top-center",
-        duration: 4000,
-      });
-  
-      // Menutup popup setelah berhasil menambahkan barang
-      onClose();
+      onClose(); // Tutup form setelah berhasil
     } catch (error) {
-      // Menampilkan pesan toast jika terjadi kesalahan
-      toast.error("Terjadi kesalahan saat menambahkan barang", {
-        position: "top-center",
-        duration: 4000,
-      });
-      console.error('Error adding barang:', error);
+      console.error('Gagal mengedit user:', error);
     }
   };
-  
 
   return (
     <>
@@ -62,7 +69,7 @@ const FormTambahBarang = ({ onClose }) => {
             padding: 20px;
             border: 1px solid #ccc;
             width: 50%;
-            height: 70%;
+            height: 80%;
           }
 
           /* Gaya untuk label */
@@ -92,8 +99,8 @@ const FormTambahBarang = ({ onClose }) => {
 
           /* Gaya untuk button-container */
           .popup .button-container {
-            text-align: right; /* Posisi tombol di sebelah kanan */
-            margin-top: 20px; /* Jarak antara tombol dan form */
+            text-align: left; /* Posisi tombol di sebelah kanan */
+            margin-top: 10px; /* Jarak antara tombol dan form */
           }
 
           /* Gaya untuk tombol "Batal" */
@@ -117,24 +124,55 @@ const FormTambahBarang = ({ onClose }) => {
             border-radius: 5px;
           }
         `}
-      </style>
+        </style>
       <div className="popup-container">
         <div className="popup">
           <div className="popup-inner">
-            <h2 style={{ marginBottom: '20px' }}>Tambah Barang</h2> {/* Tambahkan margin-bottom di sini */}
-            {/* Form tambah barang di sini */}
+            <h2 style={{ marginBottom: '20px' }}>Edit User</h2>
             <form onSubmit={handleSubmit}>
-              <label style={{ marginBottom: '10px' }}>Nama Barang:</label> {/* Tambahkan margin-bottom di sini */}
-              <input type="text" name="nama_barang" placeholder='silahkan isi nama barang' />
-              <br></br>
-              <label>Merk:</label>
-              <input type="text" name="merek" placeholder='silahkan isi merek barang'/>
-              <br></br>
-              <label>Jumlah</label>
-              <input type="text" name="jumlah" placeholder='silahkan isi jumlah barang'/>
+              <label style={{ marginBottom: '10px' }}>Nama</label>
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                placeholder="Silahkan isi nama user"
+              />
+              <br />
+              <label>Email</label>
+              <input
+                type="text"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="Silahkan isi email user"
+              />
+              <br />
+              <label>Password</label>
+              <input
+                type="text"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                placeholder="Silahkan isi password user"
+              />
+              <br />
+              <label>NISN</label>
+              <input
+                type="text"
+                name="nisn"
+                value={formData.nisn}
+                onChange={handleChange}
+                placeholder="Silahkan isi NISN user"
+              />
+              <br />
               <div className="button-container">
-                <button type="button" className="cancel" onClick={onClose}>Batal</button>
-                <button type="submit" className="add">Tambah</button>
+                <button type="button" className="cancel" onClick={onClose}>
+                  Batal
+                </button>
+                <button type="submit" className="add">
+                  Edit
+                </button>
               </div>
             </form>
           </div>
@@ -144,8 +182,9 @@ const FormTambahBarang = ({ onClose }) => {
   );
 };
 
-FormTambahBarang.propTypes = {
-  onClose: PropTypes.func.isRequired // Validate onClose as a required function prop
+EditUser.propTypes = {
+    onClose: PropTypes.func.isRequired,
+    user: PropTypes.object.isRequired
 };
 
-export default FormTambahBarang;
+export default EditUser;

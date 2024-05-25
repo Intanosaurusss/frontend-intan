@@ -3,22 +3,24 @@ import PropTypes from 'prop-types'; // Import PropTypes
 // import { useState } from 'react';
 import toast from 'react-hot-toast';
 
-const FormTambahBarang = ({ onClose }) => {
+const FormTambahUser = ({ onClose }) => {
   const handleSubmit = async (event) => {
     event.preventDefault(); // Mencegah pengiriman formulir secara default
     
     // Mengambil nilai-nilai dari formulir
-    const nama_barang = event.target.nama_barang.value;
-    const merek = event.target.merek.value;
-    const jumlah = event.target.jumlah.value;
+    const name = event.target.name.value;
+    const email = event.target.email.value;
+    const password = event.target.password.value;
+    const nisn = event.target.nisn.value;
     // const status = event.target.Status.value;
   
     try {
       // Mengirimkan data ke server menggunakan method POST
-      const response = await axios.post('http://127.0.0.1:8000/api/data_barangs/store', {
-        nama_barang,
-        merek: merek, // Sesuaikan nama field dengan yang diharapkan oleh server
-        jumlah: jumlah,
+      const response = await axios.post('http://127.0.0.1:8000/api/users', {
+        name,
+        email: email, // Sesuaikan nama field dengan yang diharapkan oleh server
+        password: password,
+        nisn: nisn,
       });
   
       // Menampilkan pesan toast sukses
@@ -31,11 +33,11 @@ const FormTambahBarang = ({ onClose }) => {
       onClose();
     } catch (error) {
       // Menampilkan pesan toast jika terjadi kesalahan
-      toast.error("Terjadi kesalahan saat menambahkan barang", {
+      toast.error("Terjadi kesalahan saat menambahkan user", {
         position: "top-center",
         duration: 4000,
       });
-      console.error('Error adding barang:', error);
+      console.error('Error adding user:', error);
     }
   };
   
@@ -62,7 +64,7 @@ const FormTambahBarang = ({ onClose }) => {
             padding: 20px;
             border: 1px solid #ccc;
             width: 50%;
-            height: 70%;
+            height: 83%;
           }
 
           /* Gaya untuk label */
@@ -93,7 +95,7 @@ const FormTambahBarang = ({ onClose }) => {
           /* Gaya untuk button-container */
           .popup .button-container {
             text-align: right; /* Posisi tombol di sebelah kanan */
-            margin-top: 20px; /* Jarak antara tombol dan form */
+            margin-top: 6px; /* Jarak antara tombol dan form */
           }
 
           /* Gaya untuk tombol "Batal" */
@@ -121,17 +123,19 @@ const FormTambahBarang = ({ onClose }) => {
       <div className="popup-container">
         <div className="popup">
           <div className="popup-inner">
-            <h2 style={{ marginBottom: '20px' }}>Tambah Barang</h2> {/* Tambahkan margin-bottom di sini */}
+            <h2 style={{ marginBottom: '20px' }}>Tambah User</h2> {/* Tambahkan margin-bottom di sini */}
             {/* Form tambah barang di sini */}
             <form onSubmit={handleSubmit}>
-              <label style={{ marginBottom: '10px' }}>Nama Barang:</label> {/* Tambahkan margin-bottom di sini */}
-              <input type="text" name="nama_barang" placeholder='silahkan isi nama barang' />
+              <label style={{ marginBottom: '10px' }}>Nama</label> {/* Tambahkan margin-bottom di sini */}
+              <input type="text" name="name" placeholder='silahkan isi nama user' />
               <br></br>
-              <label>Merk:</label>
-              <input type="text" name="merek" placeholder='silahkan isi merek barang'/>
+              <label>Email</label>
+              <input type="text" name="email" placeholder='silahkan isi email user'/>
               <br></br>
-              <label>Jumlah</label>
-              <input type="text" name="jumlah" placeholder='silahkan isi jumlah barang'/>
+              <label>Password</label>
+              <input type="text" name="password" placeholder='silahkan isi password user'/>
+              <label>NISN</label>
+              <input type="text" name="nisn" placeholder='silahkan isi NISN user'/>
               <div className="button-container">
                 <button type="button" className="cancel" onClick={onClose}>Batal</button>
                 <button type="submit" className="add">Tambah</button>
@@ -144,8 +148,8 @@ const FormTambahBarang = ({ onClose }) => {
   );
 };
 
-FormTambahBarang.propTypes = {
+FormTambahUser.propTypes = {
   onClose: PropTypes.func.isRequired // Validate onClose as a required function prop
 };
 
-export default FormTambahBarang;
+export default FormTambahUser;

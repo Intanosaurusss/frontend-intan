@@ -2,8 +2,41 @@ import Layout from "../components/Layout";
 import PaginateComponent from "../components/Paginate&Search";
 import PrintComponent from "../components/PrintComponent";
 import FilterComponent from "../components/FilterComponent";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
-const RiwayatPeminjaman= () => {
+const RiwayatPeminjaman = () => {
+  const [dataLaporanPeminjaman, setDataLaporanPeminjaman] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    axios.get('http://127.0.0.1:8000/api/laporan_peminjaman/show')
+      .then((response) => {
+        console.log(response.data); // Log the response data for debugging
+        if (Array.isArray(response.data)) {
+          setDataLaporanPeminjaman(response.data);
+        } else {
+          setDataLaporanPeminjaman([]);
+        }
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error('Error fetching data peminjaman:', error);
+        setError('Error fetching data peminjaman. Please try again later.');
+        setLoading(false);
+      });
+  }, [setError, setLoading, setDataLaporanPeminjaman]); // Tambahkan dependensi di sini
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>{error}</div>;
+  }
+
+
     return (
       <Layout>
         <style>
@@ -42,7 +75,7 @@ const RiwayatPeminjaman= () => {
           `}
           </style>
           <div className="flex-container">
-           <h1 className="title">Riwayat Peminjaman</h1>
+           <h1 className="title">Laporan Peminjaman</h1>
           </div>
           <FilterComponent></FilterComponent>
           <PaginateComponent></PaginateComponent>
@@ -54,6 +87,7 @@ const RiwayatPeminjaman= () => {
             <th style={{ width: '10%', textAlign: 'center', background: '#5896FF'}}>Kelas</th>
             <th style={{ width: '10%', textAlign: 'center', background: '#5896FF'}}>Nama Barang</th>
             <th style={{ width: '10%', textAlign: 'center', background: '#5896FF'}}>Merk</th>
+            <th style={{ width: '10%', textAlign: 'center', background: '#5896FF'}}>Kode</th>
             {/* <th style={{ width: '10%', textAlign: 'center', background: '#5896FF'}}>ID</th> */}
             <th style={{ width: '10%', textAlign: 'center', background: '#5896FF'}}>Tgl Pinjam</th>
             <th style={{ width: '10%', textAlign: 'center', background: '#5896FF'}}>Tgl Kembalikan</th>
@@ -61,44 +95,28 @@ const RiwayatPeminjaman= () => {
           </tr>
         </thead>
         <tbody>
-          <tr className="bg-blue-200 lg:text-black">
-            <td className="p-3 font-medium capitalize" style={{ textAlign: 'center' }}>1</td>
-            <td className="p-3">User</td>
-            <td className="p-3">11 Pplg 3</td>
-            <td className="p-3">Laptop</td>
-            <td className="p-3">Lenovo</td>
-            {/* <td className="p-3">1</td> */}
-            <td className="p-3">26/04/24</td>
-            <td className="p-3">26/04/24</td>
-            <td className="p-3">Dikembalikan</td>
-          </tr>
-          </tbody>
-          <tbody>
-          <tr className="bg-blue-200 lg:text-black">
-            <td className="p-3 font-medium capitalize" style={{ textAlign: 'center' }}>2</td>
-            <td className="p-3">User</td>
-            <td className="p-3">11 Pplg 3</td>
-            <td className="p-3">Laptop</td>
-            <td className="p-3">Lenovo</td>
-            {/* <td className="p-3">1</td> */}
-            <td className="p-3">26/04/24</td>
-            <td className="p-3">26/04/24</td>
-            <td className="p-3">Dikembalikan</td>
-          </tr>
-          </tbody>
-          <tbody>
-          <tr className="bg-blue-200 lg:text-black">
-            <td className="p-3 font-medium capitalize" style={{ textAlign: 'center' }}>3</td>
-            <td className="p-3">User</td>
-            <td className="p-3">11 Pplg 3</td>
-            <td className="p-3">Laptop</td>
-            <td className="p-3">Lenovo</td>
-            {/* <td className="p-3">2</td> */}
-            <td className="p-3">26/04/24</td>
-            <td className="p-3">26/04/24</td>
-            <td className="p-3">Dikembalikan</td>
-          </tr>
-          </tbody>
+  {Array.isArray(dataLaporanPeminjaman) && dataLaporanPeminjaman.length > 0 ? (
+    dataLaporanPeminjaman.map((data_laporan_peminjaman, index) => (
+      <tr key={data_laporan_peminjaman.id} className="p-3 font-medium capitalize" style={{ textAlign: 'center' }}>
+        <td className="p-3">{index + 1}</td>
+        <td className="p-3">{data_laporan_peminjaman.nama}</td>
+        <td className="p-3">{data_laporan_peminjaman.kelas}</td>
+        <td className="p-3">{data_laporan_peminjaman.nama_barang}</td>
+        <td className="p-3">{data_laporan_peminjaman.merek}</td>
+        <td className="p-3">{data_laporan_peminjaman.kode}</td>
+        {/* <td className="p-3">2</td> */}
+        <td className="p-3">{data_laporan_peminjaman.tanggal_pinjam}</td>
+        <td className="p-3">{data_laporan_peminjaman.tanggal_kembali}</td>
+        <td className="p-3">{data_laporan_peminjaman.status}</td>
+      </tr>
+    ))
+  ) : (
+    <tr>
+      <td colSpan="9" className="p-3 text-center">No data available</td>
+    </tr>
+  )}
+</tbody>
+
       </table>
       <PrintComponent></PrintComponent>
           </Layout>

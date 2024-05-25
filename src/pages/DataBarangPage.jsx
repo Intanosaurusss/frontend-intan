@@ -1,9 +1,7 @@
 import Layout from "../components/Layout";
 import FormTambahBarang from "./FormTambahBarang";
-import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { HiPencil } from "react-icons/hi";
-import { FaEye } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import PaginateComponent from "../components/Paginate&Search";
 import EditBarang from "../pages/Edit/EditBarang";
@@ -15,14 +13,14 @@ const DataBarang = () => {
   const [showPopup, setShowPopup] = useState(false);
   const [showEditBarangPopup, setShowEditBarangPopup] = useState(false);
   const [dataBarang, setDataBarang] = useState([]);
-  // const [loading, isLoading] = useState(false)
+  const [editBarangData, setEditBarangData] = useState(null);
   
-
   const handleTambahBarangClick = () => {
     setShowPopup(true);
   };
 
-  const handleEditBarangClick = () => {
+  const handleEditBarangClick = (barang) => {
+    setEditBarangData(barang);
     setShowEditBarangPopup(true);
   };
 
@@ -37,21 +35,17 @@ const DataBarang = () => {
   const navigate = useNavigate();
   
   const handlehapusbarang = (id) => {
-    axios.delete(`http://127.0.0.1:8000/api/databarang/${id}`)
+    axios.delete(`http://127.0.0.1:8000/api/data_barangs/destroy/${id}`)
       .then(() => {
-        // Menghapus data barang dari state setelah penghapusan berhasil
         setDataBarang(dataBarang.filter((barang) => barang.id !== id));
-        // Menampilkan pesan toast
         toast.success("Data barang berhasil dihapus", {
           position: "top-center",
           duration: 4000,
         });
-        // Mengarahkan pengguna ke halaman landing page
         navigate('/databarang');
       })
       .catch((error) => {
         console.error('Error deleting data barang:', error);
-        // Menampilkan pesan toast jika terjadi kesalahan
         toast.error("Gagal menghapus data barang", {
           position: "top-center",
           duration: 4000,
@@ -60,7 +54,7 @@ const DataBarang = () => {
   };
 
   useEffect(() => {
-    axios.get('http://127.0.0.1:8000/api/databarang')
+    axios.get('http://127.0.0.1:8000/api/data_barangs/show')
       .then((response) => {
         setDataBarang(response.data.data);
       })
@@ -68,34 +62,6 @@ const DataBarang = () => {
         console.error('Error fetching data barang:', error);
       });
   }, []);
-
-  // if(dataBarang.length == 0) {
-  //   return (
-  //     <div>Loading data.....</div>
-  //   );
-  // }
-  
-
-  // const handleUpdateBarang = (id, newData) => {
-  //   axios.put(`http://127.0.0.1:8000/api/databarang/${id}`, newData)
-  //     .then(() => {
-  //       // Memperbarui data barang di state setelah pembaruan berhasil
-  //       setDataBarang(dataBarang.map((barang) => (barang.id === id ? newData : barang)));
-  //       // Menampilkan pesan toast
-  //       toast.success("Data barang berhasil diperbarui", {
-  //         position: "top-center",
-  //         duration: 4000,
-  //       });
-  //     })
-  //     .catch((error) => {
-  //       console.error('Error updating data barang:', error);
-  //       // Menampilkan pesan toast jika terjadi kesalahan
-  //       toast.error("Gagal memperbarui data barang", {
-  //         position: "top-center",
-  //         duration: 4000,
-  //       });
-  //     });
-  // };
 
   return (
     <Layout>
@@ -151,22 +117,16 @@ const DataBarang = () => {
       <div className="flex-container">
         <h1 className="title">Data Barang</h1>
         <div className="button-container" style={{ gap: '10px' }}>
-        <button
-          className="bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded"
-          // onClick={handleTambahBarangClick}
-        >
-          Excel
-        </button>
-        <button
-          className="bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded mr-2"
-          onClick={handleTambahBarangClick}
-        >
-          Tambah
-        </button>
+          <button
+            className="bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded mr-2"
+            onClick={handleTambahBarangClick}
+          >
+            Tambah
+          </button>
         </div>
       </div>
       {showPopup && <FormTambahBarang onClose={handleCloseForm} />}
-      {showEditBarangPopup && <EditBarang onClose={handleCloseEditForm} />}
+      {showEditBarangPopup && <EditBarang onClose={handleCloseEditForm} barang={editBarangData} />}
       <>
         <PaginateComponent />
       </>
@@ -176,8 +136,7 @@ const DataBarang = () => {
             <th style={{ width: '2%', textAlign: 'center', background: '#5896FF', height: '3.5rem',}}>No</th>
             <th style={{ width: '20%', textAlign: 'center', background: '#5896FF'}}>Nama Barang</th>
             <th style={{ width: '20%', textAlign: 'center', background: '#5896FF'}}>Merk</th>
-            <th style={{ width: '20%', textAlign: 'center', background: '#5896FF'}}>Ruang</th>
-            {/* <th style={{ width: '20%', textAlign: 'center', background: '#5896FF'}}>Status</th> */}
+            <th style={{ width: '20%', textAlign: 'center', background: '#5896FF'}}>Jumlah</th>
             <th style={{ width: '20%', textAlign: 'center', background: '#5896FF'}}>Aksi</th>
           </tr>
         </thead>
@@ -187,14 +146,16 @@ const DataBarang = () => {
               <td className="p-3 font-medium capitalize">{index + 1}</td>
               <td className="p-3 text-center">{barang.nama_barang}</td>
               <td className="p-3 text-center">{barang.merek}</td>
-              <td className="p-3 text-center">{barang.ruang}</td>
-              {/* <td className="p-3 text-center">{barang.status}</td> */}
+              <td className="p-3 text-center">{barang.jumlah}</td>
               <td className="p-3 text-center" style={{ display: 'flex', justifyContent: 'center' }}>
-                <Link to={`/detaildatabarang/${barang.id}`} className="text-gray-500 hover:text-gray-100 mr-3">
-                  <FaEye className="text-base" style={{ display: 'inline-block' }} />
-                </Link>
-                <HiPencil className="text-blue-500 hover:text-gray-100 mx-3" onClick={handleEditBarangClick} />
-                <MdDelete className="text-red-500 hover:text-gray-100 ml-3" onClick={() => handlehapusbarang(barang.id)} />
+                <HiPencil
+                  className="text-blue-500 hover:text-gray-100 mx-3"
+                  onClick={() => handleEditBarangClick(barang)}
+                />
+                <MdDelete
+                  className="text-red-500 hover:text-gray-100 ml-3"
+                  onClick={() => handlehapusbarang(barang.id)}
+                />
               </td>
             </tr>
           ))}

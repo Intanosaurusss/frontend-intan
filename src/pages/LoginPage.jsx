@@ -62,9 +62,9 @@ export default function Login() {
         password: password,
       });
 
-      const { token, user, permissions, roles } = response.data;
+      const { token, user, permissions, role } = response.data;
 
-      if (!roles || roles.length === 0) {
+      if (!role || role.length === 0) {
         toast.error("Akun tidak memiliki role yang valid", {
           position: "top-center",
           duration: 4000,
@@ -77,7 +77,7 @@ export default function Login() {
       Cookies.set("token", token);
       Cookies.set("user", JSON.stringify(user));
       Cookies.set("permissions", JSON.stringify(permissions));
-      Cookies.set("role", roles[0]);
+      Cookies.set("role", role[0]);
 
       localStorage.setItem("token", token);
 
@@ -86,7 +86,7 @@ export default function Login() {
         duration: 4000,
       });
 
-      const userRole = roles[0];
+      const userRole = role[0];
 
       switch (userRole) {
         case "admin":
