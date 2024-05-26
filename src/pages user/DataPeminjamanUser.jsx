@@ -6,7 +6,8 @@ import axios from "axios";
 import PropTypes from "prop-types";
 
 const DataPeminjamanUser = () => {
-  const userId = '2'; // Hardcoded userId untuk testing
+    // Mengambil userId dari localStorage
+    const userId = localStorage.getItem("user_id");
 
   const [showPopup, setShowPopup] = useState(false);
   const [dataPeminjaman, setDataPeminjaman] = useState([]);

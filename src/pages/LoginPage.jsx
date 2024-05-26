@@ -18,17 +18,17 @@ export default function Login() {
     setRememberMe(!rememberMe);
   };
 
-  const token = Cookies.get("token");
+  // const token = Cookies.get("token");
 
-  useEffect(() => {
-    if (token) {
-      navigate("/");
-    }
-  }, [token, navigate]);
+  // useEffect(() => {
+  //   if (token) {
+  //     navigate("/");
+  //   }
+  // }, [token, navigate]);
 
-  if (token) {
-    return null;
-  }
+  // if (token) {
+  //   return null;
+  // }
 
   const login = async (e) => {
     e.preventDefault();
@@ -80,6 +80,8 @@ export default function Login() {
       Cookies.set("role", role[0]);
 
       localStorage.setItem("token", token);
+      localStorage.setItem('user_id', response.data.user_id); // Simpan user_id di localStorage
+        // Redirect atau tindakan lain setelah login
 
       toast.success("Login berhasil!", {
         position: "top-center",

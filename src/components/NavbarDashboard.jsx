@@ -31,6 +31,8 @@ const NavbarDashboard = () => {
         if (response.data.success) {
           localStorage.removeItem('userData');
           localStorage.removeItem('token');
+          localStorage.removeItem('user_id'); // Hapus user_id dari localStorage
+  // Redirect atau tindakan lain setelah logout
           navigate('/');
         } else {
           toast.error("Logout Gagal. Coba lagi nanti.", {
