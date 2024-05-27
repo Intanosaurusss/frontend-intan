@@ -1,5 +1,7 @@
 import PropTypes from 'prop-types'; // Import PropTypes
 import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
+import axios from 'axios';
 
 const FormTambahPeminjaman = ({ onClose }) => {
   const [currentDate, setCurrentDate] = useState('');
@@ -9,6 +11,51 @@ const FormTambahPeminjaman = ({ onClose }) => {
     const formattedDate = today.toISOString().split('T')[0]; // Format tanggal ke yyyy-mm-dd
     setCurrentDate(formattedDate);
   }, []);
+
+  const handleSubmit = async (event) => {
+    event.preventDefault(); // Mencegah pengiriman formulir secara default
+    
+    // Mengambil nilai-nilai dari formulir
+    const nama = event.target.nama.value;
+    const kelas = event.target.kelas.value;
+    const nama_barang = event.target.nama_barang.value;
+    const merek = event.target.merek.value;
+    const kode = event.target.kode.value;
+    const tanggal_pinjam = event.target.tanggal_pinjam.value;
+    const status = event.target.status.value;
+
+    // Mengambil userId dari localStorage
+    const userId = localStorage.getItem("user_id");
+  
+    try {
+      // Mengirimkan data ke server menggunakan method POST
+      const response = await axios.post(`http://127.0.0.1:8000/api/data_peminjaman/store/${userId}`, {
+        nama,
+        kelas,
+        nama_barang,
+        merek,
+        kode,
+        tanggal_pinjam,
+        status,
+      });
+  
+      // Menampilkan pesan toast sukses
+      toast.success(response.data.message, {
+        position: "top-center",
+        duration: 4000,
+      });
+  
+      // Menutup popup setelah berhasil menambahkan barang
+      onClose();
+    } catch (error) {
+      // Menampilkan pesan toast jika terjadi kesalahan
+      toast.error("Terjadi kesalahan saat menambahkan data peminjaman", {
+        position: "top-center",
+        duration: 4000,
+      });
+      console.error('Error adding peminjaman:', error);
+    }
+  };
 
   return (
     <>
@@ -93,21 +140,21 @@ const FormTambahPeminjaman = ({ onClose }) => {
           <div className="popup-inner">
             <h2 style={{ marginBottom: '10px' }}>Tambah Data Peminjaman</h2> {/* Tambahkan margin-bottom di sini */}
             {/* Form tambah barang di sini */}
-            <form>
+            <form onSubmit={handleSubmit}>
               <label style={{ marginBottom: '1px' }}>Nama</label> {/* Tambahkan margin-bottom di sini */}
-              <input type="text" name="nama_barang" placeholder='silahkan isi nama peminjam ' />
+              <input type="text" name="nama" placeholder='silahkan isi nama peminjam ' />
               <br></br>
               <label>Kelas</label>
-              <input type="text" name="merk_barang" placeholder='silahkan isi kelas peminjam'/>
+              <input type="text" name="kelas" placeholder='silahkan isi kelas peminjam'/>
               <br></br>
               <label>Nama Barang</label>
-              <input type="text" name="merk_barang" placeholder='silahkan isi nama barang yang akan dipinjam'/>
+              <input type="text" name="nama_barang" placeholder='silahkan isi nama barang yang akan dipinjam'/>
               <br></br>
               <label>Merk</label>
-              <input type="text" name="merk_barang" placeholder='silahkan isi merk barang yang akan dipinjam'/>
+              <input type="text" name="merek" placeholder='silahkan isi merk barang yang akan dipinjam'/>
               <br></br>
               <label>Kode</label>
-              <input type="text" name="merk_barang" placeholder='silahkan isi kode barangnya'/>
+              <input type="text" name="kode" placeholder='silahkan isi kode barangnya'/>
               <br></br>
               <label>Tanggal Pinjam</label>
             <input type="text" name="tanggal_pinjam" value={currentDate} readOnly />

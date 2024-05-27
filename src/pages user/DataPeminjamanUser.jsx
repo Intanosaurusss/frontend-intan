@@ -1,13 +1,13 @@
 import LayoutUser from "./LayoutUser";
 import PaginateComponent from "../components/Paginate&Search";
 import FormTambahPeminjaman from "../pages/FormTambahPeminjaman";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import PropTypes from "prop-types";
 
 const DataPeminjamanUser = () => {
-    // Mengambil userId dari localStorage
-    const userId = localStorage.getItem("user_id");
+  // Mengambil userId dari localStorage
+  const userId = localStorage.getItem("user_id");
 
   const [showPopup, setShowPopup] = useState(false);
   const [dataPeminjaman, setDataPeminjaman] = useState([]);
@@ -20,9 +20,10 @@ const DataPeminjamanUser = () => {
 
   const handleCloseForm = () => {
     setShowPopup(false);
+    fetchDataPeminjaman(); // Memperbarui data setelah form ditutup
   };
 
-  useEffect(() => {
+  const fetchDataPeminjaman = useCallback(() => {
     if (!userId) {
       console.error('userId is missing');
       setError('userId is missing');
@@ -42,20 +43,22 @@ const DataPeminjamanUser = () => {
           setDataPeminjaman([]);
         }
         setLoading(false);
+        setError(null); // Clear any previous errors
       })
       .catch((error) => {
         console.error('Error fetching data peminjaman:', error);
-        setError('Error fetching data peminjaman. Please try again later.');
+        setError('kamu belum pinjem barang di lab, ayo pinjem sekarang!');
         setLoading(false);
+        setDataPeminjaman([]); // Ensure dataPeminjaman is cleared on error
       });
   }, [userId]);
 
+  useEffect(() => {
+    fetchDataPeminjaman();
+  }, [fetchDataPeminjaman]);
+
   if (loading) {
     return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>{error}</div>;
   }
 
   return (
@@ -130,23 +133,29 @@ const DataPeminjamanUser = () => {
             </tr>
           </thead>
           <tbody>
-            {Array.isArray(dataPeminjaman) && dataPeminjaman.length > 0 ? (
-              dataPeminjaman.map((data_peminjaman, index) => (
-                <tr key={data_peminjaman.id} className="bg-blue-200 lg:text-black">
-                  <td className="p-3 font-medium capitalize">{index + 1}</td>
-                  <td className="p-3">{data_peminjaman.nama}</td>
-                  <td className="p-3">{data_peminjaman.kelas}</td>
-                  <td className="p-3">{data_peminjaman.nama_barang}</td>
-                  <td className="p-3">{data_peminjaman.merek}</td>
-                  <td className="p-3">{data_peminjaman.kode}</td>
-                  <td className="p-3">{data_peminjaman.tanggal_pinjam}</td>
-                  <td className="p-3">{data_peminjaman.status}</td>
-                </tr>
-              ))
-            ) : (
+            {error ? (
               <tr>
-                <td colSpan="8" className="p-3 text-center">No data available</td>
+                <td colSpan="8" className="p-3 text-center">{error}</td>
               </tr>
+            ) : (
+              Array.isArray(dataPeminjaman) && dataPeminjaman.length > 0 ? (
+                dataPeminjaman.map((data_peminjaman, index) => (
+                  <tr key={data_peminjaman.id} className="bg-blue-200 lg:text-black">
+                    <td className="p-3 font-medium capitalize">{index + 1}</td>
+                    <td className="p-3">{data_peminjaman.nama}</td>
+                    <td className="p-3">{data_peminjaman.kelas}</td>
+                    <td className="p-3">{data_peminjaman.nama_barang}</td>
+                    <td className="p-3">{data_peminjaman.merek}</td>
+                    <td className="p-3">{data_peminjaman.kode}</td>
+                    <td className="p-3">{data_peminjaman.tanggal_pinjam}</td>
+                    <td className="p-3">{data_peminjaman.status}</td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="8" className="p-3 text-center">Up, kamu belum pinjem barang nih. Data nya nggaada</td>
+                </tr>
+              )
             )}
           </tbody>
         </table>
