@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { HiOutlineDocumentDuplicate } from "react-icons/hi";
 import { BiHome, BiLaptop, BiTask } from "react-icons/bi";
-import { LuHotel } from "react-icons/lu";
+// import { LuHotel } from "react-icons/lu";
 import { GiAutoRepair } from "react-icons/gi";
 import { GoPersonAdd } from "react-icons/go";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -17,7 +17,7 @@ const SidebarAdmin = () => {
     { id: 1, title: "Dashboard", icon: <BiHome />, path: "/dashboard" },
     { id: 2, title: "Data Barang", icon: <BiLaptop />, path: "/databarang" },
     { id: 3, title: "Data Servis", icon: <GiAutoRepair />, path: "/dataservis" },
-    { id: 4, title: "Data Ruang", icon: <LuHotel />, path: "/dataruang" },
+    // { id: 4, title: "Data Ruang", icon: <LuHotel />, path: "/dataruang" },
     { id: 5, title: "Data User", icon: <GoPersonAdd />, path: "/datauser" },
     { id: 6, title: "Data Peminjaman", icon: <BiTask />, path: "/datapeminjaman" },
     { id: 7, title: "Laporan", icon: <HiOutlineDocumentDuplicate />, path: "/riwayatpeminjaman" },
