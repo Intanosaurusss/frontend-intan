@@ -1,6 +1,10 @@
 import { FaPrint } from "react-icons/fa6";
 
 const PrintComponent = () => {
+    const handlePrint = () => {
+        window.open('http://127.0.0.1:8000/api/laporan_peminjaman/export-pdf', '_blank');
+    };
+
     return (
         <div>
             <style>
@@ -19,25 +23,25 @@ const PrintComponent = () => {
                     text-decoration: none;
                     font-size: 16px;
                     cursor: pointer;
-                    display: flex; /* Menjadikan kontainer tombol flex */
-                    align-items: center; /* Menyusun ikon dan teks secara vertikal */
-                    max-width: 200px; /* Menentukan lebar maksimum tombol */
-                    width: 115px; /* Melebarkan tombol */
+                    display: flex;
+                    align-items: center;
+                    max-width: 200px;
+                    width: 115px;
                 }
                 .btn-primary {
-                    margin-left: 16px; /* Mengurangi margin agar sejajar dengan ikon */
+                    margin-left: 16px;
                 }
                 .btn-icon {
-                    margin-right: 5px; /* Memberikan sedikit ruang antara ikon dan teks */
-                    flex-shrink: 0; /* Mencegah ikon meregang sepanjang flex container */
+                    margin-right: 5px;
+                    flex-shrink: 0;
                 }
                 `}
             </style>
             <div className="flex-container">
-                <a className="btn btn-primary bg-blue-500" href="#" role="button">
+                <button className="btn btn-primary bg-blue-500" onClick={handlePrint}>
                     <FaPrint className="btn-icon" />
                     <span>Cetak</span>
-                </a>
+                </button>
             </div>
         </div>
     );

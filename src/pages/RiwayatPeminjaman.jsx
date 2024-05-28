@@ -118,7 +118,7 @@ const RiwayatPeminjaman = () => {
 </tbody>
 
       </table>
-      <PrintComponent></PrintComponent>
+      <PrintComponent />
           </Layout>
     )
 }

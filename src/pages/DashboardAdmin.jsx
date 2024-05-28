@@ -57,7 +57,7 @@ const DashboardAdmin = () => {
                 {`
                 .title {
                     margin-top: 0.8rem;
-                    font-weight: bold; 
+                    // font-weight: bold; 
                     color: #333;
                     margin-bottom: 1rem;
                     padding-left: 1px;

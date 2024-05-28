@@ -69,6 +69,7 @@ const DataUser = () => {
           margin-top: 0.8rem;
           padding-left: 10px;
           display: flex;
+          // font-weight: bold;
         }
         .table {
           width: 97%;
